@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install package
+        run: python -m pip install -e ".[dev]"
+
+      - name: Run tests
+        run: python -m pytest
+
+      - name: Smoke test CLI
+        run: |
+          agent-tool-drift init -o agent-tool-drift.yaml
+          agent-tool-drift snapshot examples/python_agent -o old.json
+          agent-tool-drift snapshot examples/updated_python_agent -o new.json
+          agent-tool-drift snapshot examples/langchain_agent -o langchain.json
+          agent-tool-drift snapshot examples/openai_agents_agent -o openai-agents.json
+          agent-tool-drift snapshot examples/yaml_agent -o yaml.json
+          agent-tool-drift mcp-snapshot -o mcp.json -- python examples/mcp_server/mock_server.py
+          agent-tool-drift diff old.json new.json --config agent-tool-drift.yaml --format sarif -o agent-tool-drift.sarif --github-annotations || true

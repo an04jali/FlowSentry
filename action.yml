@@ -1,0 +1,95 @@
+name: Agent Tool Drift
+description: Detect drift in agent tool contracts and emit SARIF, GitHub annotations, or Markdown reports.
+author: Agent Tool Drift contributors
+
+inputs:
+  path:
+    description: Project path to scan.
+    required: false
+    default: "."
+  config:
+    description: Optional agent-tool-drift config file.
+    required: false
+    default: ""
+  baseline:
+    description: Baseline snapshot path.
+    required: false
+    default: ".agent-tool-drift/snapshot.json"
+  report-format:
+    description: "Report format: sarif, markdown, html, or json."
+    required: false
+    default: "sarif"
+  report-path:
+    description: Report output path.
+    required: false
+    default: "agent-tool-drift.sarif"
+  fail-on-breaking:
+    description: Fail when BREAKING drift is detected.
+    required: false
+    default: "false"
+  fail-on-policy:
+    description: Fail when policy.fail_on selectors match detected drift.
+    required: false
+    default: "true"
+  update-baseline:
+    description: Update the baseline snapshot after checking.
+    required: false
+    default: "false"
+  github-annotations:
+    description: Emit GitHub Actions error/warning/notice annotations.
+    required: false
+    default: "true"
+
+outputs:
+  report-path:
+    description: Path to the generated report.
+    value: ${{ steps.run.outputs.report-path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install agent-tool-drift
+      shell: bash
+      run: python -m pip install "$GITHUB_ACTION_PATH"
+
+    - name: Run agent-tool-drift
+      id: run
+      shell: bash
+      env:
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_CONFIG: ${{ inputs.config }}
+        INPUT_BASELINE: ${{ inputs.baseline }}
+        INPUT_REPORT_FORMAT: ${{ inputs.report-format }}
+        INPUT_REPORT_PATH: ${{ inputs.report-path }}
+        INPUT_FAIL_ON_BREAKING: ${{ inputs.fail-on-breaking }}
+        INPUT_FAIL_ON_POLICY: ${{ inputs.fail-on-policy }}
+        INPUT_UPDATE_BASELINE: ${{ inputs.update-baseline }}
+        INPUT_GITHUB_ANNOTATIONS: ${{ inputs.github-annotations }}
+      run: |
+        set -euo pipefail
+
+        args=(
+          check "$INPUT_PATH"
+          --baseline "$INPUT_BASELINE"
+          --format "$INPUT_REPORT_FORMAT"
+          -o "$INPUT_REPORT_PATH"
+        )
+
+        if [[ -n "$INPUT_CONFIG" ]]; then
+          args+=(--config "$INPUT_CONFIG")
+        fi
+        if [[ "$INPUT_FAIL_ON_BREAKING" == "true" ]]; then
+          args+=(--fail-on-breaking)
+        fi
+        if [[ "$INPUT_FAIL_ON_POLICY" == "true" ]]; then
+          args+=(--fail-on-policy)
+        fi
+        if [[ "$INPUT_UPDATE_BASELINE" == "true" ]]; then
+          args+=(--update-baseline)
+        fi
+        if [[ "$INPUT_GITHUB_ANNOTATIONS" == "true" ]]; then
+          args+=(--github-annotations)
+        fi
+
+        echo "report-path=$INPUT_REPORT_PATH" >> "$GITHUB_OUTPUT"
+        agent-tool-drift "${args[@]}"

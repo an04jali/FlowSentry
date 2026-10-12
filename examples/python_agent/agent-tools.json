@@ -1,0 +1,26 @@
+{
+  "tools": [
+    {
+      "name": "lookup_customer",
+      "description": "Look up a customer record.",
+      "version": "1.0.0",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string"
+          }
+        },
+        "required": ["customer_id"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
+}

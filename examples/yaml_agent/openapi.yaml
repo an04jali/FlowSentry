@@ -1,0 +1,25 @@
+openapi: 3.0.0
+info:
+  title: YAML Agent API
+  version: 1.0.0
+paths:
+  /records/{record_id}:
+    get:
+      operationId: get_record
+      summary: Get a record.
+      parameters:
+        - name: record_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Record response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string

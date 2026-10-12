@@ -1,0 +1,21 @@
+python:
+  enabled: false
+manifests:
+  enabled: false
+openapi:
+  enabled: false
+langchain:
+  enabled: true
+
+workflows:
+  customer_support:
+    tools:
+      - customer_search
+      - ticket_summary
+    regression_tests:
+      - tests/test_customer_support.py
+  ticket_summarization:
+    tools:
+      - ticket_summary
+    regression_tests:
+      - tests/test_ticket_summarization.py

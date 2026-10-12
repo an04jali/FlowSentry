@@ -1,0 +1,29 @@
+{
+  "tools": [
+    {
+      "name": "lookup_customer",
+      "description": "Look up a customer record by ID.",
+      "version": "1.1.0",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string"
+          },
+          "include_invoices": {
+            "type": "boolean"
+          }
+        },
+        "required": ["customer_id", "include_invoices"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "display_name": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
+}

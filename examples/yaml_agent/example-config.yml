@@ -1,0 +1,8 @@
+python:
+  enabled: false
+manifests:
+  include:
+    - tools.yaml
+openapi:
+  include:
+    - openapi.yaml

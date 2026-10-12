@@ -1,0 +1,13 @@
+python:
+  enabled: false
+
+manifests:
+  enabled: false
+
+openapi:
+  enabled: false
+
+openai_agents:
+  enabled: true
+  include:
+    - "**/*.py"

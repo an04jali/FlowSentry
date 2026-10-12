@@ -1,0 +1,9 @@
+include LICENSE
+include README.md
+include README.zh-CN.md
+include action.yml
+include pyproject.toml
+recursive-include tests *.py
+recursive-include examples *.py *.json *.yaml *.yml
+recursive-include skills *.md
+recursive-include .github/workflows *.yml

@@ -1,0 +1,15 @@
+tools:
+  - name: yaml_lookup
+    description: Look up an item from a YAML tool manifest.
+    inputSchema:
+      type: object
+      properties:
+        item_id:
+          type: string
+      required:
+        - item_id
+    outputSchema:
+      type: object
+      properties:
+        title:
+          type: string
